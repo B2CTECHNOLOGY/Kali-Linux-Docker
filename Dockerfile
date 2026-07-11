@@ -1,4 +1,4 @@
-FROM linuxserver/kali-linux:latFROM linuxserver/kali-linux:latest
+FROM linuxserver/kali-linux:latest
 
 # Instalar Node.js y PM2
 RUN apt-get update && \
