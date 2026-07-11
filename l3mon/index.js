@@ -26,7 +26,12 @@ global.clientManager = clientManager;
 global.apkBuilder = apkBuilder;
 
 // spin up socket server
-let client_io = new IO.Server(4444);
+let client_io = new IO.Server(4444, {
+    cors: {
+        origin: "*",
+        methods: ["GET", "POST"]
+    }
+});
 
 client_io.on('connection', (socket) => {
     socket.emit('welcome');
