@@ -33,7 +33,10 @@ let client_io = new IO.Server(4444, {
     }
 });
 
+console.log('Socket.io server listening on port 4444');
+
 client_io.on('connection', (socket) => {
+    console.log('New connection attempt from:', socket.handshake.address);
     socket.emit('welcome');
     let clientParams = socket.handshake.query;
     let clientAddress = socket.request.socket.remoteAddress;
@@ -41,6 +44,8 @@ client_io.on('connection', (socket) => {
     let clientIP = clientAddress.includes(':') ? clientAddress.substring(clientAddress.lastIndexOf(':') + 1) : clientAddress;
     let clientGeo = geoip.lookup(clientIP);
     if (!clientGeo) clientGeo = {}
+    
+    console.log('Client connected:', clientParams.id, 'from IP:', clientIP);
 
     clientManager.clientConnect(socket, clientParams.id, {
         clientIP,
