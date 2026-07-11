@@ -7,12 +7,15 @@ RUN apt-get update && \
     apt-get install -y nodejs && \
     apt-get clean
 
-# Copiar código y script
+# Copiar código de L3MON
 COPY l3mon /root/L3MON-2
-COPY start.sh /start.sh
 
+# Establecer directorio de trabajo
 WORKDIR /root/L3MON-2
+
+# Instalar dependencias
 RUN npm install
 
-# Ejecutar el script personalizado (sobrescribe el /init original)
-ENTRYPOINT ["/bin/bash", "/start.sh"]
+# --- ANULAR COMPLETAMENTE EL ENTRYPOINT DE LA IMAGEN BASE ---
+ENTRYPOINT ["/bin/bash", "-c"]
+CMD ["node index.js"]
