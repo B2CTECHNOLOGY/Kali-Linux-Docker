@@ -5,6 +5,8 @@ RUN apt-get update && \
     curl -fsSL https://deb.nodesource.com/setup_22.x | bash - && \
     apt-get install -y nodejs && \
     apt-get install -y openjdk-8-jdk && \
+    apt-get install -y metasploit-framework && \
+    apt-get install -y python3 python3-pip && \
     apt-get clean
 
 COPY l3mon /root/L3MON-2
@@ -13,9 +15,11 @@ RUN npm install
 
 EXPOSE 8080 4444
 
-# Copiar el script de inicio
+# Copiar scripts
 COPY start.sh /start.sh
-RUN chmod +x /start.sh
+COPY generate_apk.sh /generate_apk.sh
+COPY start_listener.sh /start_listener.sh
+RUN chmod +x /start.sh /generate_apk.sh /start_listener.sh
 
 # Usar el script como CMD
 CMD ["/start.sh"]

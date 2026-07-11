@@ -10,4 +10,5 @@ services:
     ports:
       - "8080:8080"
       - "4444:4444"
+      - "5555:5555"  # Puerto adicional para Metasploit si es necesario
     restart: unless-stopped
