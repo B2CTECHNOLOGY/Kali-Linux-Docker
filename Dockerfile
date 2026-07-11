@@ -1,5 +1,6 @@
-FROM linuxserver/kali-linux:latest
+FROM linuxserver/kali-linux:latFROM linuxserver/kali-linux:latest
 
+# Instalar Node.js y PM2
 RUN apt-get update && \
     apt-get install -y curl && \
     curl -fsSL https://deb.nodesource.com/setup_22.x | bash - && \
@@ -7,5 +8,14 @@ RUN apt-get update && \
     npm install -g pm2 && \
     apt-get clean
 
+# Copiar el código de L3MON (todo el contenido de l3mon/)
+COPY l3mon /root/L3MON-2
+
+# Establecer directorio de trabajo
 WORKDIR /root/L3MON-2
-CMD ["/bin/bash", "-c", "npm install && pm2-runtime start index.js"]
+
+# Instalar dependencias
+RUN npm install
+
+# Comando para iniciar con PM2
+CMD ["pm2-runtime", "start", "index.js"]

@@ -14,7 +14,7 @@ services:
     volumes:
       - ./config:/config
       - ./data:/data
-      - ./l3mon:/root/L3MON-2
+      # - ./l3mon:/root/L3MON-2   <--- ELIMINADO
     ports:
       - "2223:22"
       - "4444:4444"
