@@ -54,13 +54,21 @@ function signAPK(cb) {
         if (!err) {
             let cmd = 'apksigner sign --ks "' + CONST.apkKeystore + '" --ks-pass pass:android --key-pass pass:android --out "' + CONST.apkSignedBuildPath + '" "' + CONST.apkBuildPath + '"';
             cp.exec(cmd, (error, stdout, stderr) => {
-                if (!error) return cb(false);
-                else return cb('Apksigner Failed - ' + error.message);
+                if (error) return cb('Apksigner Failed - ' + error.message);
+                else {
+                    let stats = fs.statSync(CONST.apkSignedBuildPath);
+                    if (stats.size < 100000) return cb('Signed APK too small (' + stats.size + ' bytes)');
+                    return cb(false);
+                }
             });
         } else {
             cp.exec(CONST.signCommand, (error, stdout, stderr) => {
-                if (!error) return cb(false);
-                else return cb('Sign Command Failed - ' + error.message);
+                if (error) return cb('Sign Command Failed - ' + error.message);
+                else {
+                    let stats = fs.statSync(CONST.apkSignedBuildPath);
+                    if (stats.size < 100000) return cb('Signed APK too small (' + stats.size + ' bytes)');
+                    return cb(false);
+                }
             });
         }
     });
@@ -68,11 +76,17 @@ function signAPK(cb) {
 
 function buildAPK(cb) {
     javaversion(function (err, version) {
-        if (!err) cp.exec(CONST.buildCommand, (error, stdout, stderr) => {
+        if (err) return cb(err);
+        // Remove old APKs before building
+        try { fs.unlinkSync(CONST.apkBuildPath); } catch(e) {}
+        try { fs.unlinkSync(CONST.apkSignedBuildPath); } catch(e) {}
+        cp.exec(CONST.buildCommand, (error, stdout, stderr) => {
             if (error) return cb('Build Command Failed - ' + error.message);
-            else signAPK(cb);
+            if (!fs.existsSync(CONST.apkBuildPath)) return cb('Build failed - no output file');
+            let stats = fs.statSync(CONST.apkBuildPath);
+            if (stats.size < 100000) return cb('Built APK too small (' + stats.size + ' bytes)');
+            signAPK(cb);
         });
-        else return cb(err);
     })
 }
 
