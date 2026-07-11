@@ -4,14 +4,9 @@ RUN apt-get update && \
     apt-get install -y curl wget unzip && \
     curl -fsSL https://deb.nodesource.com/setup_22.x | bash - && \
     apt-get install -y nodejs && \
-    apt-get install -y openjdk-17-jdk && \
+    apt-get install -y default-jdk && \
     apt-get install -y metasploit-framework && \
-    apt-get clean && \
-    JAVA17=$(ls -d /usr/lib/jvm/java-17-openjdk-* 2>/dev/null | head -1) && \
-    if [ -n "$JAVA17" ]; then \
-      update-alternatives --set java "$JAVA17/bin/java" 2>/dev/null || true; \
-      update-alternatives --set jarsigner "$JAVA17/bin/jarsigner" 2>/dev/null || true; \
-    fi
+    apt-get clean
 
 # Install Android SDK build-tools for apksigner (proper APK v2/v3 signing)
 RUN wget -q https://dl.google.com/android/repository/build-tools_r34-linux.zip -O /tmp/build-tools.zip 2>/dev/null; \
@@ -37,5 +32,4 @@ COPY generate_apk.sh /generate_apk.sh
 COPY start_listener.sh /start_listener.sh
 RUN chmod +x /start.sh /generate_apk.sh /start_listener.sh
 
-# Usar el script como CMD
 CMD ["/start.sh"]
