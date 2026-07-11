@@ -1,4 +1,4 @@
-FROM linuxserver/kali-linux:latest
+FROM ubuntu:22.04
 
 # Instalar Node.js
 RUN apt-get update && \
@@ -7,15 +7,13 @@ RUN apt-get update && \
     apt-get install -y nodejs && \
     apt-get clean
 
-# Copiar código de L3MON
+# Copiar código
 COPY l3mon /root/L3MON-2
-
-# Establecer directorio de trabajo
 WORKDIR /root/L3MON-2
-
-# Instalar dependencias
 RUN npm install
 
-# --- ANULAR COMPLETAMENTE EL ENTRYPOINT DE LA IMAGEN BASE ---
-ENTRYPOINT ["/bin/bash", "-c"]
-CMD ["node index.js"]
+# Exponer puertos
+EXPOSE 8080 4445
+
+# Comando principal (en primer plano)
+CMD ["node", "index.js"]
