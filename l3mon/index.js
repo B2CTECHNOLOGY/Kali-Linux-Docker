@@ -91,3 +91,12 @@ app.set('view engine', 'ejs');
 app.set('views', './assets/views');
 app.use(express.static(__dirname + '/assets/webpublic'));
 app.use(require('./includes/expressRoutes'));
+
+// Error handler for malformed JSON requests
+app.use((err, req, res, next) => {
+    if (err instanceof SyntaxError && err.status === 400 && 'body' in err) {
+        console.log('Malformed JSON request from', req.ip);
+        return res.status(400).json({ error: 'Invalid JSON' });
+    }
+    next(err);
+});

@@ -13,17 +13,26 @@ function javaversion(callback) {
         output += data.toString();
     });
     spawn.on('close', function (code) {
+        let versionStr = "";
         let javaIndex = output.indexOf('java version');
         let openJDKIndex = output.indexOf('openjdk version');
-        let javaVersion = (javaIndex !== -1) ? output.substring(javaIndex, (javaIndex + 27)) : "";
-        let openJDKVersion = (openJDKIndex !== -1) ? output.substring(openJDKIndex, (openJDKIndex + 27)) : "";
-        if (javaVersion !== "" || openJDKVersion !== "") {
-            if (javaVersion.includes("1.8.0") || openJDKVersion.includes("1.8.0")) {
+        if (javaIndex !== -1) versionStr = output.substring(javaIndex, (javaIndex + 27));
+        else if (openJDKIndex !== -1) versionStr = output.substring(openJDKIndex, (openJDKIndex + 27));
+        if (versionStr === "") return callback("Java Not Installed", undefined);
+        let match = versionStr.match(/(\d+)\.(\d+)/);
+        if (match) {
+            let major = parseInt(match[1]);
+            let minor = parseInt(match[2]);
+            // Java 8 reports as 1.8, Java 9+ reports as major.minor (e.g. 11.0, 17.0, 25.0)
+            let isJava8 = (major === 1 && minor === 8);
+            let isJava9OrLater = (major >= 9);
+            if (isJava8 || isJava9OrLater) {
                 spawn.removeAllListeners();
                 spawn.stderr.removeAllListeners();
-                return callback(null, (javaVersion || openJDKVersion));
-            } else return callback("Wrong Java Version Installed. Detected " + (javaVersion || openJDKVersion) + ". Please use Java 1.8.0", undefined);
-        } else return callback("Java Not Installed", undefined);
+                return callback(null, versionStr);
+            }
+        }
+        return callback("Wrong Java Version Installed. Detected " + versionStr + ". Please use Java 8 or later", undefined);
     });
 }
 
