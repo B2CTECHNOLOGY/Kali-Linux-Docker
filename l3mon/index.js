@@ -24,15 +24,14 @@ global.clientManager = clientManager;
 global.apkBuilder = apkBuilder;
 
 // spin up socket server
-let client_io = IO.listen(4444);
+let client_io = new IO.Server(4444);
 
-client_io.sockets.pingInterval = 30000;
 client_io.on('connection', (socket) => {
     socket.emit('welcome');
     let clientParams = socket.handshake.query;
-    let clientAddress = socket.request.connection;
+    let clientAddress = socket.request.socket.remoteAddress;
 
-    let clientIP = clientAddress.remoteAddress.substring(clientAddress.remoteAddress.lastIndexOf(':') + 1);
+    let clientIP = clientAddress.includes(':') ? clientAddress.substring(clientAddress.lastIndexOf(':') + 1) : clientAddress;
     let clientGeo = geoip.lookup(clientIP);
     if (!clientGeo) clientGeo = {}
 

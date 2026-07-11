@@ -12,7 +12,6 @@ services:
       - PASSWORD=Vps2026
       - SUDO_ACCESS=true
     volumes:
-      - ./config:/config
       - ./data:/data
       - ./data/maindb.json:/root/L3MON-2/maindb.json   # <--- Persistencia de contraseña
     ports:
