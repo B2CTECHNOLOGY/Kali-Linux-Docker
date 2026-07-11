@@ -12,5 +12,9 @@ RUN npm install
 
 EXPOSE 8080 4444
 
-# CMD con ruta completa para que siempre funcione
-CMD ["node", "/root/L3MON-2/index.js"]
+# Copiar el script de inicio
+COPY start.sh /start.sh
+RUN chmod +x /start.sh
+
+# Usar el script como CMD
+CMD ["/start.sh"]
