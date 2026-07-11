@@ -1,0 +1,22 @@
+version: "3.8"
+
+services:
+  kali:
+    build: .
+    container_name: kali-pentest
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/Guayaquil
+      - USER=kali
+      - PASSWORD=Vps2026
+      - SUDO_ACCESS=true
+    volumes:
+      - ./config:/config
+      - ./data:/data
+      - ./l3mon:/root/L3MON-2
+    ports:
+      - "2223:22"
+      - "4444:4444"
+      - "8080:8080"
+    restart: unless-stopped
