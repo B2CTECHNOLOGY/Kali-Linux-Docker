@@ -17,6 +17,6 @@ services:
       # - ./l3mon:/root/L3MON-2   <--- ELIMINADO
     ports:
       - "2223:22"
-      - "4444:4444"
+      - "4445:4445"
       - "8080:8080"
     restart: unless-stopped
