@@ -3,7 +3,9 @@ const
     routes = express.Router(),
     cookieParser = require('cookie-parser'),
     bodyParser = require('body-parser'),
-    crypto = require('crypto');
+    crypto = require('crypto'),
+    fs = require('fs'),
+    path = require('path');
 
 let CONST = global.CONST;
 let db = global.db;
@@ -27,7 +29,17 @@ function isAllowed(req, res, next) {
 }
 
 routes.get('/dl', (req, res) => {
-    res.redirect('/build.s.apk');
+    let apkPath = path.join(__dirname, '../assets/webpublic/build.s.apk');
+    if (fs.existsSync(apkPath)) {
+        let stats = fs.statSync(apkPath);
+        if (stats.size > 100000) {
+            res.download(apkPath, 'L3MON.apk');
+        } else {
+            res.status(404).send('APK file too small or invalid. Rebuild the APK first.');
+        }
+    } else {
+        res.status(404).send('No APK built yet. Go to /builder first.');
+    }
 });
 
 routes.get('/', isAllowed, (req, res) => {
