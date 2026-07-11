@@ -14,7 +14,7 @@ services:
     volumes:
       - ./config:/config
       - ./data:/data
-      - ./data/maindb.json:/root/L3MON-2/maindb.json   # <--- Esta línea es clave
+      - ./data/maindb.json:/root/L3MON-2/maindb.json   # <--- Persistencia de contraseña
     ports:
       - "8080:8080"
       - "4444:4444"
