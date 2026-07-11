@@ -1,6 +1,6 @@
 FROM linuxserver/kali-linux:latest
 
-# Instalar Node.js (sin PM2 por ahora)
+# Instalar Node.js (sin PM2 innecesario)
 RUN apt-get update && \
     apt-get install -y curl && \
     curl -fsSL https://deb.nodesource.com/setup_22.x | bash - && \
@@ -16,5 +16,5 @@ WORKDIR /root/L3MON-2
 # Instalar dependencias
 RUN npm install
 
-# Comando simple con Node
-CMD ["node", "index.js"]
+# --- IMPORTANTE: Sobrescribir el entrypoint de la imagen base ---
+ENTRYPOINT ["node", "index.js"]
