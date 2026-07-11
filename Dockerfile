@@ -21,6 +21,15 @@ RUN wget -q https://dl.google.com/android/repository/build-tools_r34-linux.zip -
     fi
 
 COPY l3mon /root/L3MON-2
+
+# Update apktool to latest version (v2.4.0 is incompatible with Java 25)
+RUN APKTOOL_VER=$(wget -q https://api.github.com/repos/iBotPeaches/Apktool/releases/latest -O - 2>/dev/null | grep '"tag_name"' | sed 's/.*"v\([^"]*\)".*/\1/') && \
+    if [ -n "$APKTOOL_VER" ]; then \
+      wget -q "https://github.com/iBotPeaches/Apktool/releases/download/v${APKTOOL_VER}/apktool_${APKTOOL_VER}.jar" -O /tmp/apktool.jar && \
+      if [ -f /tmp/apktool.jar ]; then \
+        mv /tmp/apktool.jar /root/L3MON-2/app/factory/apktool.jar; \
+      fi; \
+    fi
 WORKDIR /root/L3MON-2
 RUN npm install
 
