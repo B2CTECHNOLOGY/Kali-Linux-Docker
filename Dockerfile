@@ -7,10 +7,12 @@ RUN apt-get update && \
     apt-get install -y nodejs && \
     apt-get clean
 
-# Copiar código
+# Copiar código y script
 COPY l3mon /root/L3MON-2
+COPY start.sh /start.sh
+
 WORKDIR /root/L3MON-2
 RUN npm install
 
-# Comando que inicia node en segundo plano y mantiene el contenedor vivo
-CMD ["/bin/bash", "-c", "node index.js & tail -f /dev/null"]
+# Ejecutar el script personalizado (sobrescribe el /init original)
+ENTRYPOINT ["/bin/bash", "/start.sh"]
