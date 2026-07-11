@@ -14,9 +14,7 @@ services:
     volumes:
       - ./config:/config
       - ./data:/data
-      # - ./l3mon:/root/L3MON-2   <--- ELIMINADO
     ports:
-      - "2223:22"
-      - "4445:4445"
       - "8080:8080"
+      - "4444:4444"
     restart: unless-stopped
