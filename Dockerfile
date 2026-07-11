@@ -4,7 +4,7 @@ RUN apt-get update && \
     apt-get install -y curl && \
     curl -fsSL https://deb.nodesource.com/setup_22.x | bash - && \
     apt-get install -y nodejs && \
-    apt-get install -y openjdk-8-jdk && \
+    apt-get install -y default-jdk && \
     apt-get install -y metasploit-framework && \
     apt-get clean
 
