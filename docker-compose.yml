@@ -4,13 +4,6 @@ services:
   kali:
     build: .
     container_name: kali-pentest
-    environment:
-      - PUID=1000
-      - PGID=1000
-      - TZ=America/Guayaquil
-      - USER=kali
-      - PASSWORD=Vps2026
-      - SUDO_ACCESS=true
     volumes:
       - ./data:/data
       - ./data/maindb.json:/root/L3MON-2/maindb.json   # <--- Persistencia de contraseña
