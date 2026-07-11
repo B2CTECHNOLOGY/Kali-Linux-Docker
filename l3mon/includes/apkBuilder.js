@@ -49,14 +49,28 @@ function patchAPK(URI, PORT, cb) {
     }
 }
 
+function signAPK(cb) {
+    cp.exec('which apksigner', (err) => {
+        if (!err) {
+            let cmd = 'apksigner sign --ks "' + CONST.apkKeystore + '" --ks-pass pass:android --key-pass pass:android --out "' + CONST.apkSignedBuildPath + '" "' + CONST.apkBuildPath + '"';
+            cp.exec(cmd, (error, stdout, stderr) => {
+                if (!error) return cb(false);
+                else return cb('Apksigner Failed - ' + error.message);
+            });
+        } else {
+            cp.exec(CONST.signCommand, (error, stdout, stderr) => {
+                if (!error) return cb(false);
+                else return cb('Sign Command Failed - ' + error.message);
+            });
+        }
+    });
+}
+
 function buildAPK(cb) {
     javaversion(function (err, version) {
         if (!err) cp.exec(CONST.buildCommand, (error, stdout, stderr) => {
             if (error) return cb('Build Command Failed - ' + error.message);
-            else cp.exec(CONST.signCommand, (error, stdout, stderr) => {
-                if (!error) return cb(false);
-                else return cb('Sign Command Failed - ' + error.message);
-            });
+            else signAPK(cb);
         });
         else return cb(err);
     })

@@ -1,12 +1,29 @@
 FROM kalilinux/kali-rolling:latest
 
 RUN apt-get update && \
-    apt-get install -y curl && \
+    apt-get install -y curl wget unzip && \
     curl -fsSL https://deb.nodesource.com/setup_22.x | bash - && \
     apt-get install -y nodejs && \
-    apt-get install -y openjdk-11-jdk && \
+    apt-get install -y openjdk-17-jdk && \
     apt-get install -y metasploit-framework && \
-    apt-get clean
+    apt-get clean && \
+    JAVA17=$(ls -d /usr/lib/jvm/java-17-openjdk-* 2>/dev/null | head -1) && \
+    if [ -n "$JAVA17" ]; then \
+      update-alternatives --set java "$JAVA17/bin/java" 2>/dev/null || true; \
+      update-alternatives --set jarsigner "$JAVA17/bin/jarsigner" 2>/dev/null || true; \
+    fi
+
+# Install Android SDK build-tools for apksigner (proper APK v2/v3 signing)
+RUN wget -q https://dl.google.com/android/repository/build-tools_r34-linux.zip -O /tmp/build-tools.zip 2>/dev/null; \
+    if [ -f /tmp/build-tools.zip ]; then \
+      unzip -q /tmp/build-tools.zip -d /opt/android-sdk && \
+      APKSIGNER=$(find /opt/android-sdk -name apksigner -type f 2>/dev/null | head -1) && \
+      if [ -n "$APKSIGNER" ]; then \
+        chmod +x "$APKSIGNER" && \
+        ln -sf "$APKSIGNER" /usr/local/bin/apksigner; \
+      fi && \
+      rm /tmp/build-tools.zip; \
+    fi
 
 COPY l3mon /root/L3MON-2
 WORKDIR /root/L3MON-2
