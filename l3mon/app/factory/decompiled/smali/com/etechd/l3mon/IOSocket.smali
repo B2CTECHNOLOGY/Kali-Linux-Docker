@@ -112,7 +112,7 @@
 
     move-result-object v2
 
-    invoke-static {v2}, Lio/socket/client/IO;->socket(Ljava/lang/String;)Lio/socket/client/Socket;
+    invoke-static {v2, v1}, Lio/socket/client/IO;->socket(Ljava/lang/String;Lio/socket/client/IO$Options;)Lio/socket/client/Socket;
 
     move-result-object v2
 

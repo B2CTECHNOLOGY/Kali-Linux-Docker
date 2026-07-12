@@ -26,7 +26,10 @@ global.clientManager = clientManager;
 global.apkBuilder = apkBuilder;
 
 // spin up socket server
-let client_io = IO(4444);
+let client_io = IO(4444, {
+    pingInterval: 30000,
+    pingTimeout: 300000
+});
 
 console.log('Socket.io server listening on port 4444');
 
