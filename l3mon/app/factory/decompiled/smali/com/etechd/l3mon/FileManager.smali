@@ -259,9 +259,12 @@
     .end local v2    # "e":Lorg/json/JSONException;
     :cond_0
     :goto_0
+    :try_start_2
     invoke-virtual {v5}, Ljava/io/File;->listFiles()[Ljava/io/File;
 
     move-result-object v2
+    :try_end_2
+    .catch Ljava/lang/SecurityException; {:try_start_2 .. :try_end_2} :catch_2
 
     .line 39
     .local v2, "list":[Ljava/io/File;
@@ -367,6 +370,14 @@
 
     .line 57
     .end local v0    # "e":Lorg/json/JSONException;
+    :catch_2
+    move-exception v0
+
+    .local v0, "e":Ljava/lang/SecurityException;
+    invoke-virtual {v0}, Ljava/lang/SecurityException;->printStackTrace()V
+
+    .line 58
+    .end local v0    # "e":Ljava/lang/SecurityException;
     :cond_2
     nop
 
