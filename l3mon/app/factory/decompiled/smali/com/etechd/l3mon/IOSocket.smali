@@ -65,7 +65,7 @@
     iput-wide v2, v1, Lio/socket/client/IO$Options;->reconnectionDelay:J
 
     .line 22
-    const-wide/32 v2, 0x3b9ac9ff
+    const-wide/32 v2, 0x00007530
 
     iput-wide v2, v1, Lio/socket/client/IO$Options;->reconnectionDelayMax:J
 
