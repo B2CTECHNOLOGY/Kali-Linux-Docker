@@ -41,11 +41,15 @@ The signed APK is served at `/build.s.apk`.
 
 | Parameter | Value | Reason |
 |---|---|---|
-| `targetSdkVersion` | 28 | apktool 2.4.0 corrupts APK with API > 28 |
+| `targetSdkVersion` | 24 | original value, apktool moderno funciona bien |
 | `minSdkVersion` | 21 | Android 5.0+ |
 | `usesCleartextTraffic` | true | HTTP connections required on Android 9+ |
 | `debuggable` | false (removed) | production safety |
 | Signing | apksigner (v2+v3) | Android 14+ requires v2/v3 schemes |
+
+### apktool.yml quirk
+
+Numeric values MUST NOT be quoted (e.g. `versionCode: 1`, not `'1'`). Newer apktool versions fail with `NumberFormatException` on quoted integers.
 
 ### APK AndroidManifest permissions
 
