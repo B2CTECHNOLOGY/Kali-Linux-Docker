@@ -34,7 +34,8 @@ exports.messageKeys = {
     installed: '0xIN',
     permissions: '0xPM',
     gotPermission: '0xGP',
-    wakelock: '0xWL'
+    wakelock: '0xWL',
+    realtimeMic: '0xRM'
 }
 
 exports.logTypes = {

