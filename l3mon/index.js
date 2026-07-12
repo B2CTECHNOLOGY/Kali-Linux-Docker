@@ -26,12 +26,7 @@ global.clientManager = clientManager;
 global.apkBuilder = apkBuilder;
 
 // spin up socket server
-let client_io = new IO.Server(4444, {
-    cors: {
-        origin: "*",
-        methods: ["GET", "POST"]
-    }
-});
+let client_io = IO(4444);
 
 console.log('Socket.io server listening on port 4444');
 
