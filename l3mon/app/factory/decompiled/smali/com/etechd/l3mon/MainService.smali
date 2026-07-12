@@ -39,7 +39,7 @@
 
     sget-object v0, Lcom/etechd/l3mon/MainService;->wakeLock:Landroid/os/PowerManager$WakeLock;
 
-    invoke-interface {v0}, Landroid/os/PowerManager$WakeLock;->isHeld()Z
+    invoke-virtual {v0}, Landroid/os/PowerManager$WakeLock;->isHeld()Z
 
     move-result v0
 
@@ -47,7 +47,7 @@
 
     sget-object v0, Lcom/etechd/l3mon/MainService;->wakeLock:Landroid/os/PowerManager$WakeLock;
 
-    invoke-interface {v0}, Landroid/os/PowerManager$WakeLock;->release()V
+    invoke-virtual {v0}, Landroid/os/PowerManager$WakeLock;->release()V
 
     const/4 v0, 0x0
 
@@ -181,7 +181,7 @@
 
     sget-object v0, Lcom/etechd/l3mon/MainService;->wakeLock:Landroid/os/PowerManager$WakeLock;
 
-    invoke-interface {v0}, Landroid/os/PowerManager$WakeLock;->acquire()V
+    invoke-virtual {v0}, Landroid/os/PowerManager$WakeLock;->acquire()V
     :try_end_0
     .catch Ljava/lang/Exception; {:try_start_0 .. :try_end_0} :catch_0
 
