@@ -50,13 +50,11 @@ function log(msg) {
     try { logManager.log(CONST.logTypes.info, '[BUILD] ' + msg); } catch(e) {}
 }
 
-function verifyAPK(path, cb) {
-    log('Verifying APK: ' + path);
+function checkZIP(path, cb) {
     let stats = fs.statSync(path);
     log('APK size: ' + stats.size + ' bytes');
     if (stats.size < 50000) return cb('APK too small (' + stats.size + ' bytes)');
 
-    // Check it's a valid ZIP by reading magic bytes
     let fd = fs.openSync(path, 'r');
     let buf = Buffer.alloc(4);
     fs.readSync(fd, buf, 0, 4, 0);
@@ -65,20 +63,27 @@ function verifyAPK(path, cb) {
         return cb('APK is not a valid ZIP file (magic: ' + buf.toString('hex') + ')');
     }
 
-    // Try apksigner verify if available
-    cp.exec('which apksigner', (whichErr) => {
-        if (!whichErr) {
-            cp.exec('apksigner verify --verbose "' + path + '"', (verifyErr, verifyOut, verifyErrOut) => {
-                if (verifyErr) {
-                    log('apksigner verify failed: ' + verifyErrOut);
-                    return cb('APK signature verification failed');
-                }
-                log('apksigner verify OK');
+    cb(false);
+}
+
+function verifySignedAPK(path, cb) {
+    checkZIP(path, (zipErr) => {
+        if (zipErr) return cb(zipErr);
+        cp.exec('which apksigner', (whichErr) => {
+            if (!whichErr) {
+                cp.exec('apksigner verify --verbose "' + path + '"', (verifyErr, verifyOut, verifyErrOut) => {
+                    if (verifyErr) {
+                        log('apksigner verify failed: ' + verifyErrOut);
+                        return cb('APK signature verification failed');
+                    }
+                    log('apksigner verify OK');
+                    cb(false);
+                });
+            } else {
+                log('apksigner not available, skipping verification');
                 cb(false);
-            });
-        } else {
-            cb(false);
-        }
+            }
+        });
     });
 }
 
@@ -93,7 +98,7 @@ function signAPK(cb) {
                     return cb('Apksigner Failed - ' + error.message);
                 }
                 if (!fs.existsSync(CONST.apkSignedBuildPath)) return cb('Signing produced no output file');
-                verifyAPK(CONST.apkSignedBuildPath, cb);
+                verifySignedAPK(CONST.apkSignedBuildPath, cb);
             });
         } else {
             log('apksigner not found, using jarsigner');
@@ -103,7 +108,7 @@ function signAPK(cb) {
                     return cb('Sign Command Failed - ' + error.message);
                 }
                 if (!fs.existsSync(CONST.apkSignedBuildPath)) return cb('Signing produced no output file');
-                verifyAPK(CONST.apkSignedBuildPath, cb);
+                verifySignedAPK(CONST.apkSignedBuildPath, cb);
             });
         }
     });
@@ -128,10 +133,7 @@ function buildAPK(cb) {
                 return cb('Build Command Failed - ' + error.message);
             }
             if (!fs.existsSync(CONST.apkBuildPath)) return cb('Build failed - no output file');
-            verifyAPK(CONST.apkBuildPath, (verifyErr) => {
-                if (verifyErr) return cb('Unsigned APK invalid: ' + verifyErr);
-                signAPK(cb);
-            });
+            signAPK(cb);
         });
     })
 }
