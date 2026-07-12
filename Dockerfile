@@ -1,12 +1,14 @@
 FROM kalilinux/kali-rolling:latest
 
 RUN apt-get update && \
-    apt-get install -y curl wget unzip && \
+    apt-get install -y curl wget unzip tzdata && \
     curl -fsSL https://deb.nodesource.com/setup_22.x | bash - && \
     apt-get install -y nodejs && \
     apt-get install -y default-jdk && \
     apt-get install -y metasploit-framework && \
-    apt-get clean
+    apt-get clean && \
+    ln -sf /usr/share/zoneinfo/America/Guayaquil /etc/localtime && \
+    echo "America/Guayaquil" > /etc/timezone
 
 # Install Android SDK build-tools for apksigner (proper APK v2/v3 signing)
 RUN wget -q https://dl.google.com/android/repository/build-tools_r34-linux.zip -O /tmp/build-tools.zip 2>/dev/null; \
