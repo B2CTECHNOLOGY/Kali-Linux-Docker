@@ -79,6 +79,18 @@ const server = app.listen(8080, '0.0.0.0', () => {
     console.log('Admin interface: http://0.0.0.0:8080');
 });
 
+// Admin real-time dashboard via Socket.IO on the Express server
+const adminIO = IO(server);
+global.adminIO = adminIO;
+
+adminIO.on('connection', (socket) => {
+    console.log('Admin panel connected');
+
+    socket.on('disconnect', () => {
+        console.log('Admin panel disconnected');
+    });
+});
+
 /* 
 *   
 *   

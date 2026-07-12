@@ -12,6 +12,19 @@ function showNotification(backgroundColor, text) {
     Snackbar.show({ text, backgroundColor, pos: 'top-right', showAction: false });
 }
 
+function toggleWakeLock(element, deviceID) {
+    $(element).addClass('loading');
+    var url = '/manage/' + deviceID + '/0xWL';
+    $.post(url, function (data) {
+        $(element).removeClass('loading');
+        if (data.error) {
+            showNotification('#f03434', data.error);
+        } else {
+            showNotification('#2ecc71', data.message);
+        }
+    });
+}
+
 function updateButton(element, commandID, additionalParams = {}) {
     $(element).addClass('loading');
     sendCommand(commandID, additionalParams, (error, message) => {

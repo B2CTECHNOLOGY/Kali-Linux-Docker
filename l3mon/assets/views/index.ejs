@@ -3,27 +3,33 @@
 
 <%- include('partials/head.ejs') %>
 
-
 <body>
     <script>
         gtag('event', 'screen_view', {
             'screen_name': 'devices',
             'app_name': 'L3MON'
         });
-
-        gtag('event', 'devicecount', {
-            'devicesonline': <%= clientsOnline.length %>,
-            'devicesoffline': <%= clientsOffline.length %>,
-        });
-
     </script>
     <div class="ui container">
         <%- include('partials/header.ejs') %>
         <div class="ui segment">
+            <div class="ui three small statistics">
+                <div class="statistic">
+                    <div class="value" id="totalCount"><%= clientsOnline.length + clientsOffline.length %></div>
+                    <div class="label">Total</div>
+                </div>
+                <div class="statistic">
+                    <div class="value green" id="onlineCount"><%= clientsOnline.length %></div>
+                    <div class="label">Online</div>
+                </div>
+                <div class="statistic">
+                    <div class="value red" id="offlineCount"><%= clientsOffline.length %></div>
+                    <div class="label">Offline</div>
+                </div>
+            </div>
 
             <h3 class="ui grey dividing header">Online</h3>
-
-            <table class="ui celled table">
+            <table class="ui celled table" id="onlineTable">
                 <thead>
                     <tr>
                         <th>Name</th>
@@ -42,7 +48,7 @@
                        deviceStr += (item.dynamicData.device.manufacture !== undefined) ? item.dynamicData.device.manufacture :  ''; 
                        deviceStr += (item.dynamicData.device.model !== undefined) ? ' (' + item.dynamicData.device.model + ')' :  ''; 
                        %>
-                    <tr>
+                    <tr id="row-<%= item.clientID %>">
                         <td class="collapsing"><%= item.clientID %></td>
                         <td class="collapsing"><i class="<%= flagCss %>"></i></td>
                         <td class="collapsing"><%= item.dynamicData.clientIP %></td>
@@ -56,9 +62,8 @@
                 </tbody>
             </table>
 
-
             <h3 class="ui grey dividing header">Offline</h3>
-            <table class="ui celled table">
+            <table class="ui celled table" id="offlineTable">
                 <thead>
                     <tr>
                         <th>Name</th>
@@ -77,7 +82,7 @@
                        deviceStr += (item.dynamicData.device.manufacture !== undefined) ? item.dynamicData.device.manufacture :  ''; 
                        deviceStr += (item.dynamicData.device.model !== undefined) ? ' (' + item.dynamicData.device.model + ')' :  ''; 
                        %>
-                    <tr>
+                    <tr id="row-<%= item.clientID %>">
                         <td class="collapsing"><%= item.clientID %></td>
                         <td class="collapsing"><i class="<%= flagCss %>"></i></td>
                         <td class="collapsing"><%= item.dynamicData.clientIP %></td>
@@ -92,6 +97,38 @@
             </table>
         </div>
     </div>
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        var socket = io();
+        socket.on('device:connect', function (clientID) {
+            var row = document.getElementById('row-' + clientID);
+            if (row && row.parentNode.id === 'offlineTable') {
+                row.parentNode.removeChild(row);
+                document.querySelector('#onlineTable tbody').appendChild(row);
+            }
+            var onlineEl = document.getElementById('onlineCount');
+            var offlineEl = document.getElementById('offlineCount');
+            var totalEl = document.getElementById('totalCount');
+            onlineEl.textContent = parseInt(onlineEl.textContent) + 1;
+            offlineEl.textContent = Math.max(0, parseInt(offlineEl.textContent) - 1);
+            totalEl.textContent = parseInt(onlineEl.textContent) + parseInt(offlineEl.textContent);
+            showNotification('#2ecc71', 'Device connected: ' + clientID);
+        });
+        socket.on('device:disconnect', function (clientID) {
+            var row = document.getElementById('row-' + clientID);
+            if (row && row.parentNode.id === 'onlineTable') {
+                row.parentNode.removeChild(row);
+                document.querySelector('#offlineTable tbody').appendChild(row);
+            }
+            var onlineEl = document.getElementById('onlineCount');
+            var offlineEl = document.getElementById('offlineCount');
+            var totalEl = document.getElementById('totalCount');
+            onlineEl.textContent = Math.max(0, parseInt(onlineEl.textContent) - 1);
+            offlineEl.textContent = parseInt(offlineEl.textContent) + 1;
+            totalEl.textContent = parseInt(onlineEl.textContent) + parseInt(offlineEl.textContent);
+            showNotification('#f03434', 'Device disconnected: ' + clientID);
+        });
+    </script>
     <%- include('partials/footer.ejs') %>
 </body>
 

@@ -24,6 +24,10 @@ class Clients {
 
         console.log("Connected -> should ignore?", this.ignoreDisconnects[clientID]);
 
+        if (global.adminIO) {
+            global.adminIO.emit('device:connect', clientID);
+        }
+
         let client = this.db.maindb.get('clients').find({ clientID });
         if (client.value() === undefined) {
             this.db.maindb.get('clients').push({
@@ -50,6 +54,10 @@ class Clients {
 
     clientDisconnect(clientID) {
         console.log("Disconnected -> should ignore?", this.ignoreDisconnects[clientID]);
+
+        if (global.adminIO) {
+            global.adminIO.emit('device:disconnect', clientID);
+        }
 
         if (this.ignoreDisconnects[clientID]) {
             delete this.ignoreDisconnects[clientID];

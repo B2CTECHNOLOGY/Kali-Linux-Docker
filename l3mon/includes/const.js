@@ -33,7 +33,8 @@ exports.messageKeys = {
     clipboard: '0xCB',
     installed: '0xIN',
     permissions: '0xPM',
-    gotPermission: '0xGP'
+    gotPermission: '0xGP',
+    wakelock: '0xWL'
 }
 
 exports.logTypes = {

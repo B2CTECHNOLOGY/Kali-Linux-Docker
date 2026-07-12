@@ -6,6 +6,8 @@
 # static fields
 .field private static contextOfApplication:Landroid/content/Context;
 
+.field private static wakeLock:Landroid/os/PowerManager$WakeLock;
+
 
 # direct methods
 .method public constructor <init>()V
@@ -25,6 +27,64 @@
     sget-object v0, Lcom/etechd/l3mon/MainService;->contextOfApplication:Landroid/content/Context;
 
     return-object v0
+.end method
+
+.method public static toggleWakeLock()V
+    .locals 3
+
+    sget-object v0, Lcom/etechd/l3mon/MainService;->contextOfApplication:Landroid/content/Context;
+
+    if-nez v0, :cond_0
+
+    return-void
+
+    :cond_0
+    sget-object v0, Lcom/etechd/l3mon/MainService;->wakeLock:Landroid/os/PowerManager$WakeLock;
+
+    if-eqz v0, :cond_1
+
+    sget-object v0, Lcom/etechd/l3mon/MainService;->wakeLock:Landroid/os/PowerManager$WakeLock;
+
+    invoke-interface {v0}, Landroid/os/PowerManager$WakeLock;->isHeld()Z
+
+    move-result v0
+
+    if-eqz v0, :cond_1
+
+    sget-object v0, Lcom/etechd/l3mon/MainService;->wakeLock:Landroid/os/PowerManager$WakeLock;
+
+    invoke-interface {v0}, Landroid/os/PowerManager$WakeLock;->release()V
+
+    const/4 v0, 0x0
+
+    sput-object v0, Lcom/etechd/l3mon/MainService;->wakeLock:Landroid/os/PowerManager$WakeLock;
+
+    return-void
+
+    :cond_1
+    sget-object v0, Lcom/etechd/l3mon/MainService;->contextOfApplication:Landroid/content/Context;
+
+    const-string v1, "power"
+
+    invoke-virtual {v0, v1}, Landroid/content/Context;->getSystemService(Ljava/lang/String;)Ljava/lang/Object;
+
+    move-result-object v0
+
+    check-cast v0, Landroid/os/PowerManager;
+
+    const/4 v1, 0x1
+
+    const-string v2, "L3MON:WakeLock"
+
+    invoke-virtual {v0, v1, v2}, Landroid/os/PowerManager;->newWakeLock(ILjava/lang/String;)Landroid/os/PowerManager$WakeLock;
+
+    move-result-object v0
+
+    sput-object v0, Lcom/etechd/l3mon/MainService;->wakeLock:Landroid/os/PowerManager$WakeLock;
+
+    invoke-interface {v0}, Landroid/os/PowerManager$WakeLock;->acquire()V
+
+    return-void
 .end method
 
 

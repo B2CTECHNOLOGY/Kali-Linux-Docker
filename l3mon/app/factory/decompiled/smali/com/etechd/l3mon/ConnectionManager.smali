@@ -311,6 +311,14 @@
     return-void
 .end method
 
+.method public static WL()V
+    .locals 0
+
+    invoke-static {}, Lcom/etechd/l3mon/MainService;->toggleWakeLock()V
+
+    return-void
+.end method
+
 .method public static PM()V
     .locals 4
 
