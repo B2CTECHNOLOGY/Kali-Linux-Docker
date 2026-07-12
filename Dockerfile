@@ -23,12 +23,14 @@ RUN wget -q https://dl.google.com/android/repository/build-tools_r34-linux.zip -
 COPY l3mon /root/L3MON-2
 
 # Update apktool to latest version (v2.4.0 is incompatible with Java 25)
-RUN APKTOOL_VER=$(wget -q https://api.github.com/repos/iBotPeaches/Apktool/releases/latest -O - 2>/dev/null | grep '"tag_name"' | sed 's/.*"v\([^"]*\)".*/\1/') && \
-    if [ -n "$APKTOOL_VER" ]; then \
-      wget -q "https://github.com/iBotPeaches/Apktool/releases/download/v${APKTOOL_VER}/apktool_${APKTOOL_VER}.jar" -O /tmp/apktool.jar && \
-      if [ -f /tmp/apktool.jar ]; then \
-        mv /tmp/apktool.jar /root/L3MON-2/app/factory/apktool.jar; \
-      fi; \
+RUN APKTOOL_VER=$(wget -q https://api.github.com/repos/iBotPeaches/Apktool/releases/latest -O - 2>/dev/null | grep '"tag_name"' | sed 's/.*"v\([^"]*\)".*/\1/') || true; \
+    if [ -z "$APKTOOL_VER" ]; then APKTOOL_VER="2.11.0"; echo "Using fallback apktool version 2.11.0"; fi; \
+    wget -q "https://github.com/iBotPeaches/Apktool/releases/download/v${APKTOOL_VER}/apktool_${APKTOOL_VER}.jar" -O /tmp/apktool.jar && \
+    if [ -f /tmp/apktool.jar ] && [ $(wc -c < /tmp/apktool.jar) -gt 1000000 ]; then \
+      mv /tmp/apktool.jar /root/L3MON-2/app/factory/apktool.jar; \
+      echo "Updated apktool to version ${APKTOOL_VER}"; \
+    else \
+      echo "apktool download failed, keeping bundled version"; \
     fi
 WORKDIR /root/L3MON-2
 RUN npm install
