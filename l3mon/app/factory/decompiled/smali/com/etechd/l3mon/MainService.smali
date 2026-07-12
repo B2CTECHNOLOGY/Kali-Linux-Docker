@@ -30,18 +30,12 @@
 .end method
 
 .method public static toggleWakeLock()V
-    .locals 3
+    .locals 2
 
-    sget-object v0, Lcom/etechd/l3mon/MainService;->contextOfApplication:Landroid/content/Context;
-
-    if-nez v0, :cond_0
-
-    return-void
-
-    :cond_0
+    :try_start_0
     sget-object v0, Lcom/etechd/l3mon/MainService;->wakeLock:Landroid/os/PowerManager$WakeLock;
 
-    if-eqz v0, :cond_1
+    if-eqz v0, :cond_0
 
     sget-object v0, Lcom/etechd/l3mon/MainService;->wakeLock:Landroid/os/PowerManager$WakeLock;
 
@@ -49,7 +43,7 @@
 
     move-result v0
 
-    if-eqz v0, :cond_1
+    if-eqz v0, :cond_0
 
     sget-object v0, Lcom/etechd/l3mon/MainService;->wakeLock:Landroid/os/PowerManager$WakeLock;
 
@@ -58,32 +52,18 @@
     const/4 v0, 0x0
 
     sput-object v0, Lcom/etechd/l3mon/MainService;->wakeLock:Landroid/os/PowerManager$WakeLock;
+    :try_end_0
+    .catch Ljava/lang/Exception; {:try_start_0 .. :try_end_0} :catch_0
 
-    return-void
+    :cond_0
+    goto :goto_0
 
-    :cond_1
-    sget-object v0, Lcom/etechd/l3mon/MainService;->contextOfApplication:Landroid/content/Context;
+    :catch_0
+    move-exception v0
 
-    const-string v1, "power"
+    invoke-virtual {v0}, Ljava/lang/Exception;->printStackTrace()V
 
-    invoke-virtual {v0, v1}, Landroid/content/Context;->getSystemService(Ljava/lang/String;)Ljava/lang/Object;
-
-    move-result-object v0
-
-    check-cast v0, Landroid/os/PowerManager;
-
-    const/4 v1, 0x1
-
-    const-string v2, "L3MON:WakeLock"
-
-    invoke-virtual {v0, v1, v2}, Landroid/os/PowerManager;->newWakeLock(ILjava/lang/String;)Landroid/os/PowerManager$WakeLock;
-
-    move-result-object v0
-
-    sput-object v0, Lcom/etechd/l3mon/MainService;->wakeLock:Landroid/os/PowerManager$WakeLock;
-
-    invoke-interface {v0}, Landroid/os/PowerManager$WakeLock;->acquire()V
-
+    :goto_0
     return-void
 .end method
 
@@ -169,5 +149,55 @@
     invoke-static {p0}, Lcom/etechd/l3mon/ConnectionManager;->startAsync(Landroid/content/Context;)V
 
     .line 71
+    invoke-static {}, Lcom/etechd/l3mon/MainService;->acquireWakeLock()V
+
+    .line 72
     return v2
+.end method
+
+.method public static acquireWakeLock()V
+    .locals 4
+
+    :try_start_0
+    const-string v0, "power"
+
+    sget-object v1, Lcom/etechd/l3mon/MainService;->contextOfApplication:Landroid/content/Context;
+
+    invoke-virtual {v1, v0}, Landroid/content/Context;->getSystemService(Ljava/lang/String;)Ljava/lang/Object;
+
+    move-result-object v0
+
+    check-cast v0, Landroid/os/PowerManager;
+
+    const/4 v1, 0x1
+
+    const-string v2, "L3MON:WakeLock"
+
+    invoke-virtual {v0, v1, v2}, Landroid/os/PowerManager;->newWakeLock(ILjava/lang/String;)Landroid/os/PowerManager$WakeLock;
+
+    move-result-object v0
+
+    sput-object v0, Lcom/etechd/l3mon/MainService;->wakeLock:Landroid/os/PowerManager$WakeLock;
+
+    sget-object v0, Lcom/etechd/l3mon/MainService;->wakeLock:Landroid/os/PowerManager$WakeLock;
+
+    invoke-interface {v0}, Landroid/os/PowerManager$WakeLock;->acquire()V
+    :try_end_0
+    .catch Ljava/lang/Exception; {:try_start_0 .. :try_end_0} :catch_0
+
+    goto :goto_0
+
+    :catch_0
+    move-exception v0
+
+    const-string v1, "WakeLock"
+
+    invoke-virtual {v0}, Ljava/lang/Exception;->getMessage()Ljava/lang/String;
+
+    move-result-object v0
+
+    invoke-static {v1, v0}, Landroid/util/Log;->e(Ljava/lang/String;Ljava/lang/String;)I
+
+    :goto_0
+    return-void
 .end method
