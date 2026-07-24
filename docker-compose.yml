@@ -9,6 +9,7 @@ services:
     volumes:
       - ./data:/data
       - ./data/maindb.json:/root/L3MON-2/maindb.json   # <--- Persistencia de contraseña
+      - ./data/clientData:/root/L3MON-2/clientData     # <--- Persistencia de datos de clientes
     ports:
       - "8080:8080"
       - "4444:4444"
